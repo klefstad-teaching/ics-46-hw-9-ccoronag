@@ -4,17 +4,7 @@ void error(string word1, string word2, string msg) {
     cerr << "Error creating word ladder from \"" << word1 << "\" to \"" << word2 << "\": " << msg << endl;
 }
 
-// void load_words(set<string> & word_list, const string& file_name) {
-//     ifstream inFile;
-//     inFile.open(file_name);
 
-//     string line;
-
-//     while(getline(inFile, line)) {
-//         word_list.push_back(line);
-//     }
-//     inFile.close();
-// }
 
 bool edit_distance_within(const std::string& str1, const std::string& str2, int d) {
     const int word1_len = str1.length();
@@ -61,42 +51,68 @@ int min_of_three(const int& a, const int& b, const int& c) {
     return min;
 }
 
-// bool is_adjacent(const string& word1, const string& word2) {
-    // int w1_len = word1.length();
-    // int w2_len = word2.length();
+bool is_adjacent(const string& word1, const string& word2) {
+    return edit_distance_within(word1, word2, 1);
+}
 
-    // // case where both words are the same length and just checks if there are more than 1 differences
-    // if (w1_len == w2_len){ 
-    //     int differences = 0;
-    //     for (int i = 0; i < w1_len; ++i) {
-    //         if (word1[i] != word2[i]) {
-    //             ++differences;
-    //             if (differences > 1) {return false;}
-    //         }
-    //     }
-    //     return true;
-    // }
-    // // case where the lengths differ by one and need to check if the words are adjacent.
-    // else if (w1_len - w2_len == 1 || w1_len - w2_len == -1) {
-    //     string shortest = w1_len < w2_len ? word1 : word2; // get the shortest of the two
-    //     string other = shortest == word1 ? word2 : word1; // get the other word
+vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
+    if (begin_word == end_word) {
+        error(begin_word, end_word, "Starting word and destination word cannot be the same word.");
+        return {};
+    }
+    
+    if (find(word_list.begin(), word_list.end(), end_word) == word_list.end()) {
+        error(begin_word, end_word, "The destination word is not in the word bank.");
+        return {};
+    }
 
-    //     // loop through the shortest word and add every char from a-z at every index to see if it matches the other word
-    //     for (int i = 0; i < shortest.length(); ++i) {
-    //         string word_copy = tolower(shortest); // create a copy since insert modifies the given string
-    //         string other_copy = tolower(other); // create a lower case copy so the strings can be compared
-    //         for (char c = 'a'; c <= 'z'; ++c) {
-    //             if (word_copy.insert(i, 1, c) == other_copy) {
-    //                 return true;
-    //             }
-    //         }
-    //     }
-    // }
-    // else {
+    queue<vector<string>> ladder_queue;
+    vector<string> first_vector;
+    first_vector.push_back(begin_word);
+    ladder_queue.push(first_vector);
+    set<string> visited;
+    visited.insert(begin_word);
+    while (!ladder_queue.empty()) {
+        vector<string> ladder = ladder_queue.front();
+        ladder_queue.pop();
+        string last_word = ladder[ladder.size()-1];
+        for (string word : word_list) {
+            // cout << "inner" << endl;
+            if (is_adjacent(last_word, word)) {
+                if (!visited.contains(word)) {
+                    visited.insert(word);
+                    vector<string> new_ladder(ladder);
+                    new_ladder.push_back(word);
+                    if (word == end_word) {
+                        return new_ladder;
+                    }
+                    ladder_queue.push(new_ladder);
+                }
+            }
+        }
+        // cout << "done with inner" << endl;
+    }
+    return {};
+}
 
-    // }
-// }
+void load_words(set<string> & word_list, const string& file_name) {
+    ifstream inFile;
+    inFile.open(file_name);
 
-// vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
+    string line;
 
-// }
+    while(getline(inFile, line)) {
+        for (char &c : line) {
+            c = tolower(c);
+        }
+        word_list.insert(line);
+    }
+
+    inFile.close();
+}
+
+void print_word_ladder(const vector<string>& ladder) {
+    for (string word : ladder) {
+        cout << word << ' ';
+    }
+}
