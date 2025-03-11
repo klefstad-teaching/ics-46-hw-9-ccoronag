@@ -32,10 +32,9 @@ bool edit_distance_within(const std::string& str1, const std::string& str2, int 
                 cache[i][j] = cache[i-1][j-1];
             }
             else {
-                cache[i][j] = 1 + std::min({cache[i-1][j],
+                cache[i][j] = 1 + min_of_three(cache[i-1][j],
                                     cache[i][j-1],
-                                    cache[i-1][j-1]}); // replace
-                if (cache[i][j] > d) {return false;}
+                                    cache[i-1][j-1]); // replace
             }
             
         }
