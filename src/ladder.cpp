@@ -32,10 +32,12 @@ bool edit_distance_within(const std::string& str1, const std::string& str2, int 
                 cache[i][j] = cache[i-1][j-1];
             }
             else {
-                cache[i][j] = 1 + min_of_three(cache[i-1][j], // delete
-                                    cache[i][j-1], // insert
-                                    cache[i-1][j-1]); // replace
+                cache[i][j] = 1 + std::min({cache[i-1][j],
+                                    cache[i][j-1],
+                                    cache[i-1][j-1]}); // replace
+                if (cache[i][j] > d) {return false;}
             }
+            
         }
     }
     return cache[word1_len][word2_len] <= d;
@@ -113,9 +115,15 @@ void load_words(set<string> & word_list, const string& file_name) {
 }
 
 void print_word_ladder(const vector<string>& ladder) {
+    if (ladder.size() == 0) {
+        cout << "No word ladder found.\n";
+        return;
+    }
+    cout << "Word ladder found: ";
     for (string word : ladder) {
         cout << word << ' ';
     }
+    cout << "\n";
 }
 
 #define my_assert(e) {cout << #e << ((e) ? " passed": " failed") << endl;}
