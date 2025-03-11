@@ -9,10 +9,11 @@ void error(string word1, string word2, string msg) {
 bool edit_distance_within(const std::string& str1, const std::string& str2, int d) {
     const int word1_len = str1.length();
     const int word2_len = str2.length();
-    int cache[word1_len+1][word2_len+1];
-    for (int i = 0; i < word1_len+1; ++i) {
-        fill(cache[i], cache[i] + word2_len+1, 0);
-    }
+    // int cache[word1_len+1][word2_len+1];
+    // for (int i = 0; i < word1_len+1; ++i) {
+    //     fill(cache[i], cache[i] + word2_len+1, 0);
+    // }
+    vector<vector<int>> cache(word1_len+1, vector<int>(word2_len+1, 0));
 
     // initialize first row
     for (int i = 0; i < word2_len+1; ++i) {

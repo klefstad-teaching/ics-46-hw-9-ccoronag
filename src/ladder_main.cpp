@@ -11,7 +11,7 @@ void test_edit_distance() {
 }
 
 int main() {
-    // test_edit_distance();
+    test_edit_distance();
     set<string> word_list;
     word_list.insert("hot");
     word_list.insert("dot");
