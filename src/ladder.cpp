@@ -6,53 +6,61 @@ void error(string word1, string word2, string msg) {
 
 
 
-bool edit_distance_within(const std::string& str1, const std::string& str2, int d) {
-    const int word1_len = str1.length();
-    const int word2_len = str2.length();
-    // int cache[word1_len+1][word2_len+1];
-    // for (int i = 0; i < word1_len+1; ++i) {
-    //     fill(cache[i], cache[i] + word2_len+1, 0);
-    // }
-    vector<vector<int>> cache(word1_len+1, vector<int>(word2_len+1, 0));
-
-    // initialize first row
-    for (int i = 0; i < word2_len+1; ++i) {
-        cache[0][i] = i;
-    }
-    // initializw first col
-    for (int i = 0; i < word1_len+1; ++i) {
-        cache[i][0] = i;
-    }
-
-    //iterate through the cache from the bottom right to the top-left
-    for (int i = 1; i < word1_len+1; ++i) {
-        for (int j = 1; j < word2_len+1; ++j) {
-            // are the characters we are comparing equal
-            if (str1[i-1] == str2[j-1]) {
-                cache[i][j] = cache[i-1][j-1];
-            }
-            else {
-                cache[i][j] = 1 + min_of_three(cache[i-1][j],
-                                    cache[i][j-1],
-                                    cache[i-1][j-1]); // replace
-            }
-            
-        }
-    }
-    return cache[word1_len][word2_len] <= d;
-}
-
 // bool edit_distance_within(const std::string& str1, const std::string& str2, int d) {
-//     if (d < 0) {return false;}
-//     // if str2 is empty, it will need str1.length edits to become like str1
-//     if (str2.legnth() == 0) {return str1.length() <= d;}
-//     if (str1.legnth() == 0) {return str2.legnth() <= d;}
+//     const int word1_len = str1.length();
+//     const int word2_len = str2.length();
+//     // int cache[word1_len+1][word2_len+1];
+//     // for (int i = 0; i < word1_len+1; ++i) {
+//     //     fill(cache[i], cache[i] + word2_len+1, 0);
+//     // }
+//     vector<vector<int>> cache(word1_len+1, vector<int>(word2_len+1, 0));
 
-//     // equal case: move on to the next chars
-//     if (str1[0] == str2[0]) {return edit_distance_within(str1.substr(1), str2.substr(1), d);}
+//     // initialize first row
+//     for (int i = 0; i < word2_len+1; ++i) {
+//         cache[0][i] = i;
+//     }
+//     // initializw first col
+//     for (int i = 0; i < word1_len+1; ++i) {
+//         cache[i][0] = i;
+//     }
 
-//     return 
+//     //iterate through the cache from the bottom right to the top-left
+//     for (int i = 1; i < word1_len+1; ++i) {
+//         for (int j = 1; j < word2_len+1; ++j) {
+//             // are the characters we are comparing equal
+//             if (str1[i-1] == str2[j-1]) {
+//                 cache[i][j] = cache[i-1][j-1];
+//             }
+//             else {
+//                 cache[i][j] = 1 + min_of_three(cache[i-1][j],
+//                                     cache[i][j-1],
+//                                     cache[i-1][j-1]); // replace
+//             }
+            
+//         }
+//     }
+//     return cache[word1_len][word2_len] <= d;
 // }
+
+bool edit_distance_within(const std::string& str1, const std::string& str2, int d) {
+    if (d < 0) {return false;}
+    
+    // if str2 is empty, it will need str1.length edits to become like str1
+    if (str2.length() == 0) {return str1.length() <= d;}
+    if (str1.length() == 0) {return str2.length() <= d;}
+
+    // check to see if the first char is the same to know what to do with the next ifs
+    if (str1[0] == str2[0]) {return edit_distance_within(str1.substr(1), str2.substr(1), d);}
+
+    // since the heads are different, we shorten the longer word by one and decrease the distance by 1
+    if (str1.length() < str2.length()) {return edit_distance_within(str1, str2.substr(1), d-1);}
+    // since the heads are different, we shorten the longer word by one and decrease the distance by 1
+    if (str2.length() < str1.length()) {return edit_distance_within(str1.substr(1), str2, d-1);}
+    // a is equals to b but their char isnt the same so we move to the next char and decrease edit, essentially doing a replacement
+    else {return edit_distance_within(str1.substr(1), str2.substr(1), d-1);}
+
+    if (d >= 0) {return true;}
+}
 
 int min_of_three(const int& a, const int& b, const int& c) {
     int min = a;
