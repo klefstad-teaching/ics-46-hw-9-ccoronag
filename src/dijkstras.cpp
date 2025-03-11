@@ -7,11 +7,14 @@ vector<int> dijkstra_shortest_path(const Graph& G, int source, vector<int>& prev
     previous.resize(numVertices, -1);
     
     distances[source] = 0;
-    priority_queue<pair<int, int>> minHeap; // pair<vertex, weight>
-    minHeap.push(pair{source, 0});
+    previous[source] = -1;
+
+
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> minHeap; // pair<weight, vertex>
+    minHeap.push(pair{0, source});
 
     while(!minHeap.empty()) {
-        int u = minHeap.top().first;
+        int u = minHeap.top().second;
         minHeap.pop();
         if (visited[u]) {continue;}
         visited[u] = true;
@@ -21,7 +24,7 @@ vector<int> dijkstra_shortest_path(const Graph& G, int source, vector<int>& prev
             if (!visited[v] && distances[u] + weight < distances[v]) {
                 distances[v] = distances[u] + weight;
                 previous[v] = u;
-                minHeap.push(pair{v, distances[v]});
+                minHeap.push(pair{distances[v], v});
             }
         }
     }
