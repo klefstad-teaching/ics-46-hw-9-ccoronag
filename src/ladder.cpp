@@ -42,6 +42,18 @@ bool edit_distance_within(const std::string& str1, const std::string& str2, int 
     return cache[word1_len][word2_len] <= d;
 }
 
+// bool edit_distance_within(const std::string& str1, const std::string& str2, int d) {
+//     if (d < 0) {return false;}
+//     // if str2 is empty, it will need str1.length edits to become like str1
+//     if (str2.legnth() == 0) {return str1.length() <= d;}
+//     if (str1.legnth() == 0) {return str2.legnth() <= d;}
+
+//     // equal case: move on to the next chars
+//     if (str1[0] == str2[0]) {return edit_distance_within(str1.substr(1), str2.substr(1), d);}
+
+//     return 
+// }
+
 int min_of_three(const int& a, const int& b, const int& c) {
     int min = a;
     if (b < min) {
@@ -54,6 +66,7 @@ int min_of_three(const int& a, const int& b, const int& c) {
 }
 
 bool is_adjacent(const string& word1, const string& word2) {
+    if (abs(static_cast<int>(word1.length() - word2.length())) > 1) {return false;}
     return edit_distance_within(word1, word2, 1);
 }
 
